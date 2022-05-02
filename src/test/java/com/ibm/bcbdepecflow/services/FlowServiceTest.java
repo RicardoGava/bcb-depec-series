@@ -1,8 +1,6 @@
-package com.ibm.bcbdepeccashflow.services;
+package com.ibm.bcbdepecflow.services;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class FlowServiceTest {
 

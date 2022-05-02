@@ -1,4 +1,5 @@
 var SERIE;
+var HOST;
 
 const GET = {
     method: 'GET',
@@ -6,14 +7,16 @@ const GET = {
 };
 
 let catchSerie = () => {
-    return fetch('http://localhost:8080/serie', GET)
+    HOST = location.protocol + '//' + location.host;
+    return fetch(`${HOST}/serie`, GET)
         .then(response => response.text())
         .catch(error => console.log('error', error));
 }
 
 let receivedData = async () => {
     SERIE = await catchSerie();
-    fetch(`http://localhost:8080/${SERIE}/dados`, GET)
+    document.title = `Banco Central - Dados Abertos - Série ${SERIE}`;
+    fetch(`${HOST}/${SERIE}/dados`, GET)
         .then(response => response.json())
         .then(result => genTables(result))
         .catch(error => console.log('error', error));
@@ -36,9 +39,9 @@ let genTables = (result) => {
 }
 
 function genTh(result) {
-    var th = "";
+    var th = '';
     for (key in result) {
-        th += '<th scope="col">' + key + '</th>\n';
+        th += `<th scope="col">${key}</th>`;
     }
     return th;
 }

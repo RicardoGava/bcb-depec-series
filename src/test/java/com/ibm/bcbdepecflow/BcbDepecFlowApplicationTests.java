@@ -1,4 +1,4 @@
-package com.ibm.bcbdepeccashflow;
+package com.ibm.bcbdepecflow;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
