@@ -1,4 +1,4 @@
-package com.ibm.bcbdepecflow.entities;
+package com.ibm.bcbdepecflow.domain;
 
 import lombok.*;
 

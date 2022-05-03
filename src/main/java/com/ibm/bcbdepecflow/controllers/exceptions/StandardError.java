@@ -1,4 +1,4 @@
-package com.ibm.bcbdepecflow.resources.exceptions;
+package com.ibm.bcbdepecflow.controllers.exceptions;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;

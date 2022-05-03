@@ -1,6 +1,12 @@
 package com.ibm.bcbdepecflow.config;
 
-import com.ibm.bcbdepecflow.entities.Flow;
+import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.HttpHeader;
+import com.gargoylesoftware.htmlunit.SilentCssErrorHandler;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.javascript.SilentJavaScriptErrorListener;
+import com.ibm.bcbdepecflow.domain.Flow;
+import com.ibm.bcbdepecflow.services.SeriesMetadataHashMap;
 import com.ibm.bcbdepecflow.repositories.FlowRepository;
 import io.netty.handler.timeout.ReadTimeoutException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +36,9 @@ public class TestConfig implements CommandLineRunner {
     @Autowired
     private FlowRepository flowRepository;
 
+    @Autowired
+    private SeriesMetadataHashMap seriesMetadata;
+
     @Override
     public void run(String... args) throws Exception {
 
@@ -40,7 +49,7 @@ public class TestConfig implements CommandLineRunner {
 
         WebClient webClient = WebClient.create();
 
-        Flux<Flow> fluxCashFlow = webClient
+        Flux<Flow> fluxFlow = webClient
                 .method(HttpMethod.GET)
                 .uri("https://api.bcb.gov.br/dados/serie/bcdata.sgs." + serie + "/dados?formato=json")
                 .accept(MediaType.APPLICATION_JSON)
@@ -49,12 +58,51 @@ public class TestConfig implements CommandLineRunner {
                 .timeout(Duration.ofSeconds(5))
                 .onErrorMap(ReadTimeoutException.class, ex -> new HttpTimeoutException("ReadTimeout"));
 
-        List<Flow> allFlow = fluxCashFlow
+        List<Flow> flowList = fluxFlow
                 .collect(Collectors.toList())
                 .share().block();
 
-        if (allFlow != null) {
-            flowRepository.saveAll(allFlow);
+        final com.gargoylesoftware.htmlunit.WebClient pageLoader =
+                new com.gargoylesoftware.htmlunit.WebClient(BrowserVersion.FIREFOX);
+        pageLoader.addRequestHeader(HttpHeader.ACCEPT_LANGUAGE, "pt-BR");
+        pageLoader.getOptions().setJavaScriptEnabled(true);
+        pageLoader.getOptions().setThrowExceptionOnScriptError(false);
+        pageLoader.getOptions().setThrowExceptionOnFailingStatusCode(false);
+        pageLoader.setJavaScriptErrorListener(new SilentJavaScriptErrorListener());
+        pageLoader.setCssErrorHandler(new SilentCssErrorHandler());
+        pageLoader.getOptions().setDownloadImages(false);
+        pageLoader.getOptions().setTimeout(20000);
+
+
+        seriesMetadata.putMetadataHashMap("serie", serie);
+
+        try {
+            final HtmlPage mainPage = pageLoader.getPage("https://www3.bcb.gov.br/sgspub/consultarmetadados/consultarMetadadosSeries.do?method=consultarMetadadosSeriesInternet&hdOidSerieSelecionada=" + serie);
+
+            String stringPage = mainPage.asNormalizedText();
+
+            seriesMetadata.putMetadataHashMap("nome", stringPage.substring(
+                            (stringPage.indexOf("Nome completo ") + 14),
+                            stringPage.indexOf(" Nome abreviado")
+                    )
+            );
+            seriesMetadata.putMetadataHashMap("unidadePadrao", stringPage.substring(
+                            (stringPage.indexOf("Unidade padrão ") + 15),
+                            stringPage.indexOf(" Fonte")
+                    )
+            );
+            seriesMetadata.putMetadataHashMap("fonte", stringPage.substring(
+                            (stringPage.indexOf("Fonte ") + 6),
+                            stringPage.indexOf(" Data início")
+                    )
+            );
+
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+        }
+
+        if (flowList != null) {
+            flowRepository.saveAll(flowList);
         } else {
             throw new RuntimeException("Não foi possível obter os dados da URI especificada.");
         }

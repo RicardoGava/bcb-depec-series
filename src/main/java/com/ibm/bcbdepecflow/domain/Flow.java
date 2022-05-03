@@ -1,4 +1,4 @@
-package com.ibm.bcbdepecflow.entities;
+package com.ibm.bcbdepecflow.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
@@ -20,7 +20,7 @@ public class Flow implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    private Long Id;
+    private Long id;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private LocalDate data;
     private BigDecimal valor;

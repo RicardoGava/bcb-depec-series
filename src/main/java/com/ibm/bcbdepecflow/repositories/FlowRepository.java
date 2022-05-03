@@ -1,6 +1,6 @@
 package com.ibm.bcbdepecflow.repositories;
 
-import com.ibm.bcbdepecflow.entities.Flow;
+import com.ibm.bcbdepecflow.domain.Flow;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;

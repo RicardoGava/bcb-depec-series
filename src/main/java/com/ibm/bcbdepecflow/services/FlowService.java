@@ -1,10 +1,10 @@
 package com.ibm.bcbdepecflow.services;
 
-import com.ibm.bcbdepecflow.entities.Flow;
-import com.ibm.bcbdepecflow.entities.FlowSum;
+import com.ibm.bcbdepecflow.domain.Flow;
+import com.ibm.bcbdepecflow.domain.FlowSum;
 import com.ibm.bcbdepecflow.repositories.FlowRepository;
 import com.ibm.bcbdepecflow.services.exceptions.DataBaseException;
-import com.ibm.bcbdepecflow.services.exceptions.ResourceNotFoundException;
+import com.ibm.bcbdepecflow.services.exceptions.ItemNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -36,7 +36,7 @@ public class FlowService {
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Flow findById(Long id) {
         Optional<Flow> obj = repository.findById(id);
-        return obj.orElseThrow(() -> new ResourceNotFoundException(id));
+        return obj.orElseThrow(() -> new ItemNotFoundException(id));
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
@@ -111,7 +111,7 @@ public class FlowService {
         try {
             repository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
-            throw new ResourceNotFoundException(id);
+            throw new ItemNotFoundException(id);
         } catch (DataIntegrityViolationException e) {
             throw new DataBaseException(e.getMessage());
         }
@@ -125,7 +125,7 @@ public class FlowService {
             entity.setValor(obj.getValor());
             return repository.save(entity);
         } catch (EntityNotFoundException e) {
-            throw new ResourceNotFoundException(id);
+            throw new ItemNotFoundException(id);
         }
     }
 
@@ -141,7 +141,7 @@ public class FlowService {
             }
             return repository.save(entity);
         } catch (EntityNotFoundException e) {
-            throw new ResourceNotFoundException(id);
+            throw new ItemNotFoundException(id);
         }
     }
 

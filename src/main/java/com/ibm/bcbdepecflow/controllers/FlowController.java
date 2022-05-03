@@ -1,7 +1,7 @@
-package com.ibm.bcbdepecflow.resources;
+package com.ibm.bcbdepecflow.controllers;
 
-import com.ibm.bcbdepecflow.entities.Flow;
-import com.ibm.bcbdepecflow.entities.FlowSum;
+import com.ibm.bcbdepecflow.domain.Flow;
+import com.ibm.bcbdepecflow.domain.FlowSum;
 import com.ibm.bcbdepecflow.services.FlowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @RequestMapping(value = "${api-bcb-serie}/dados")
-public class FlowResources {
+public class FlowController {
 
     @Autowired
     private FlowService service;

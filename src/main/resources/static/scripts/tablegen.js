@@ -9,14 +9,14 @@ const GET = {
 let catchSerie = () => {
     HOST = location.protocol + '//' + location.host;
     return fetch(`${HOST}/serie`, GET)
-        .then(response => response.text())
+        .then(response => response.json())
         .catch(error => console.log('error', error));
 }
 
 let receivedData = async () => {
     SERIE = await catchSerie();
-    document.title = `Banco Central - Dados Abertos - Série ${SERIE}`;
-    fetch(`${HOST}/${SERIE}/dados`, GET)
+    document.title = `Série ${SERIE.serie} - ${SERIE.nome}`;
+    fetch(`${HOST}/${SERIE.serie}/dados`, GET)
         .then(response => response.json())
         .then(result => genTables(result))
         .catch(error => console.log('error', error));
@@ -24,7 +24,7 @@ let receivedData = async () => {
 
 let genTables = (result) => {
     const table = document.getElementById('table');
-    table.innerHTML = `<caption>Série ${SERIE}</caption>
+    table.innerHTML = `<caption>Série ${SERIE.serie} - ${SERIE.nome}</caption>
     <thead><tr>${genTh(result[0])}</tr></thead><tbody>`;
     result.forEach((obj) => {
         var row = document.createElement('TR');
