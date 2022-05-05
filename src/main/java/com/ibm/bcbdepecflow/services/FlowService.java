@@ -4,12 +4,13 @@ import com.ibm.bcbdepecflow.domain.Flow;
 import com.ibm.bcbdepecflow.domain.FlowSum;
 import com.ibm.bcbdepecflow.repositories.FlowRepository;
 import com.ibm.bcbdepecflow.services.exceptions.DataBaseException;
-import com.ibm.bcbdepecflow.services.exceptions.ItemNotFoundException;
+import com.ibm.bcbdepecflow.services.exceptions.IdNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -29,29 +30,44 @@ public class FlowService {
     private FlowRepository repository;
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public List<Flow> findAll() {
-        return repository.findAll();
+    public Page<Flow> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Flow findById(Long id) {
         Optional<Flow> obj = repository.findById(id);
-        return obj.orElseThrow(() -> new ItemNotFoundException(id));
+        return obj.orElseThrow(() -> new IdNotFoundException(id));
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public List<Flow> findAllByDataBetween(LocalDate dataInicial, LocalDate datafinal) {
-        return repository.findAllByDataBetween(dataInicial, datafinal);
+    public List<Flow> findByData(Integer dia, Integer mes, Integer ano) {
+        List<Flow> list = repository.findAll();
+        if (ano != null) {
+            list = list.stream().filter(data -> data.getData().getYear() == ano).collect(Collectors.toList());
+        }
+        if (mes != null) {
+            list = list.stream().filter(data -> data.getData().getMonthValue() == mes).collect(Collectors.toList());
+        }
+        if (dia != null) {
+            list = list.stream().filter(data -> data.getData().getDayOfMonth() == dia).collect(Collectors.toList());
+        }
+        return list;
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public List<Flow> findAllByDataGreaterThanEqual(LocalDate dataInicial) {
-        return repository.findAllByDataGreaterThanEqual(dataInicial);
+    public Page<Flow> findAllByDataBetween(LocalDate dataInicial, LocalDate datafinal, Pageable pageable) {
+        return repository.findAllByDataBetween(dataInicial, datafinal, pageable);
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public List<Flow> findAllByDataLessThanEqual(LocalDate datafinal) {
-        return repository.findAllByDataLessThanEqual(datafinal);
+    public Page<Flow> findAllByDataGreaterThanEqual(LocalDate dataInicial, Pageable pageable) {
+        return repository.findAllByDataGreaterThanEqual(dataInicial, pageable);
+    }
+
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public Page<Flow> findAllByDataLessThanEqual(LocalDate datafinal, Pageable pageable) {
+        return repository.findAllByDataLessThanEqual(datafinal, pageable);
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
@@ -111,9 +127,7 @@ public class FlowService {
         try {
             repository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
-            throw new ItemNotFoundException(id);
-        } catch (DataIntegrityViolationException e) {
-            throw new DataBaseException(e.getMessage());
+            throw new IdNotFoundException(id);
         }
     }
 
@@ -125,7 +139,7 @@ public class FlowService {
             entity.setValor(obj.getValor());
             return repository.save(entity);
         } catch (EntityNotFoundException e) {
-            throw new ItemNotFoundException(id);
+            throw new IdNotFoundException(id);
         }
     }
 
@@ -141,7 +155,7 @@ public class FlowService {
             }
             return repository.save(entity);
         } catch (EntityNotFoundException e) {
-            throw new ItemNotFoundException(id);
+            throw new IdNotFoundException(id);
         }
     }
 

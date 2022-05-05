@@ -9,7 +9,7 @@ import java.util.HashMap;
 @Service
 @Getter
 @NoArgsConstructor
-public class SeriesMetadataHashMap {
+public class SeriesMetadataHashMapService {
     private HashMap<String, String> seriesMetadataHashMap = new HashMap<>();
 
     public void putMetadataHashMap(String key, String value) {

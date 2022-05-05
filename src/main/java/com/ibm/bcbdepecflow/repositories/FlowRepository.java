@@ -1,20 +1,24 @@
 package com.ibm.bcbdepecflow.repositories;
 
 import com.ibm.bcbdepecflow.domain.Flow;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface FlowRepository extends JpaRepository<Flow, Long> {
 
     //https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation
+    //https://springhow.com/spring-mvc-pagination-sorting/
 
-    List<Flow> findAllByDataBetween(LocalDate dataInicial, LocalDate dataFinal);
+    Page<Flow> findAllByDataBetween(LocalDate dataInicial, LocalDate dataFinal, Pageable pageable);
 
-    List<Flow> findAllByDataGreaterThanEqual(LocalDate dataInicial);
+    Page<Flow> findAllByDataGreaterThanEqual(LocalDate dataInicial, Pageable pageable);
 
-    List<Flow> findAllByDataLessThanEqual(LocalDate dataFinal);
+    Page<Flow> findAllByDataLessThanEqual(LocalDate dataFinal, Pageable pageable);
 
     // Para reutilização do código precisei tirar os Queries, pois infelizmente
     // não era possível alterar o nome da tabela selecionada por variável

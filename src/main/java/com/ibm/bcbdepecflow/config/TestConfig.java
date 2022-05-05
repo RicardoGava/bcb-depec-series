@@ -6,7 +6,7 @@ import com.gargoylesoftware.htmlunit.SilentCssErrorHandler;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.javascript.SilentJavaScriptErrorListener;
 import com.ibm.bcbdepecflow.domain.Flow;
-import com.ibm.bcbdepecflow.services.SeriesMetadataHashMap;
+import com.ibm.bcbdepecflow.services.SeriesMetadataHashMapService;
 import com.ibm.bcbdepecflow.repositories.FlowRepository;
 import io.netty.handler.timeout.ReadTimeoutException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ public class TestConfig implements CommandLineRunner {
     private FlowRepository flowRepository;
 
     @Autowired
-    private SeriesMetadataHashMap seriesMetadata;
+    private SeriesMetadataHashMapService seriesMetadata;
 
     @Override
     public void run(String... args) throws Exception {

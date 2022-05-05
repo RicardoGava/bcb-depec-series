@@ -4,6 +4,9 @@ import com.ibm.bcbdepecflow.domain.Flow;
 import com.ibm.bcbdepecflow.domain.FlowSum;
 import com.ibm.bcbdepecflow.services.FlowService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -27,22 +30,34 @@ public class FlowController {
         return ResponseEntity.ok().body(obj);
     }
 
+    @GetMapping(value= "/data")
+    @ResponseBody
+    public ResponseEntity<List<Flow>> findByDataLike(
+            @RequestParam(required = false) Integer dia,
+            @RequestParam(required = false) Integer mes,
+            @RequestParam(required = false) Integer ano
+            ) {
+        List<Flow> list = service.findByData(dia, mes, ano);
+        return ResponseEntity.ok().body(list);
+    }
+
     @GetMapping
     @ResponseBody
-    public ResponseEntity<List<Flow>> findByDate(
+    public ResponseEntity<Page<Flow>> multipleFind(
+            Pageable pageable,
             @RequestParam(required = false) LocalDate dataInicial,
             @RequestParam(required = false) LocalDate dataFinal) {
-        List<Flow> list = new ArrayList<>();
+        Page<Flow> page;
         if (dataInicial != null && dataFinal != null) {
-            list = service.findAllByDataBetween(dataInicial, dataFinal);
+            page = service.findAllByDataBetween(dataInicial, dataFinal, pageable);
         } else if (dataInicial != null) {
-            list = service.findAllByDataGreaterThanEqual(dataInicial);
+            page = service.findAllByDataGreaterThanEqual(dataInicial, pageable);
         } else if (dataFinal != null) {
-            list = service.findAllByDataLessThanEqual(dataFinal);
+            page = service.findAllByDataLessThanEqual(dataFinal, pageable);
         } else {
-            list = service.findAll();
+            page = service.findAll(pageable);
         }
-        return ResponseEntity.ok().body(list);
+        return ResponseEntity.ok().body(page);
     }
 
     @GetMapping(value = "/ultimos/{valores}")
@@ -92,4 +107,5 @@ public class FlowController {
         obj = service.updatePartially(id, obj);
         return ResponseEntity.ok().body(obj);
     }
+
 }

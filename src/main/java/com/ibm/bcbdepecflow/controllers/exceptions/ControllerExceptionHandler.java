@@ -1,7 +1,7 @@
 package com.ibm.bcbdepecflow.controllers.exceptions;
 
 import com.ibm.bcbdepecflow.services.exceptions.DataBaseException;
-import com.ibm.bcbdepecflow.services.exceptions.ItemNotFoundException;
+import com.ibm.bcbdepecflow.services.exceptions.IdNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -13,8 +13,8 @@ import java.time.Instant;
 @ControllerAdvice
 public class ControllerExceptionHandler {
 
-    @ExceptionHandler(ItemNotFoundException.class)
-    public ResponseEntity<StandardError> resourceNotFound(ItemNotFoundException e, HttpServletRequest request) {
+    @ExceptionHandler(IdNotFoundException.class)
+    public ResponseEntity<StandardError> resourceNotFound(IdNotFoundException e, HttpServletRequest request) {
         String error = "Item not found";
         HttpStatus status = HttpStatus.NOT_FOUND;
         StandardError err = new StandardError(Instant.now(),
