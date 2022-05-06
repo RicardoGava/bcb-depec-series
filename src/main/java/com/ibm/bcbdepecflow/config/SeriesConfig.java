@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -26,9 +25,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Configuration
-@Profile("test")
 @EnableTransactionManagement
-public class TestConfig implements CommandLineRunner {
+public class SeriesConfig implements CommandLineRunner {
 
     @Value("${api-bcb-serie}")
     String serie;
@@ -62,6 +60,12 @@ public class TestConfig implements CommandLineRunner {
                 .collect(Collectors.toList())
                 .share().block();
 
+        if (flowList != null) {
+            flowRepository.saveAll(flowList);
+        } else {
+            throw new RuntimeException("Não foi possível obter os dados da URI especificada.");
+        }
+
         final com.gargoylesoftware.htmlunit.WebClient pageLoader =
                 new com.gargoylesoftware.htmlunit.WebClient(BrowserVersion.FIREFOX);
         pageLoader.addRequestHeader(HttpHeader.ACCEPT_LANGUAGE, "pt-BR");
@@ -72,7 +76,6 @@ public class TestConfig implements CommandLineRunner {
         pageLoader.setCssErrorHandler(new SilentCssErrorHandler());
         pageLoader.getOptions().setDownloadImages(false);
         pageLoader.getOptions().setTimeout(20000);
-
 
         seriesMetadata.putMetadataHashMap("serie", serie);
 
@@ -101,10 +104,5 @@ public class TestConfig implements CommandLineRunner {
             System.out.println(e.getMessage());
         }
 
-        if (flowList != null) {
-            flowRepository.saveAll(flowList);
-        } else {
-            throw new RuntimeException("Não foi possível obter os dados da URI especificada.");
-        }
     }
 }

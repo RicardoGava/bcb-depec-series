@@ -27,8 +27,8 @@ const GET = {
 };
 
 let catchSerie = () => {
-    HOST = "http://localhost:8080";
-    //HOST = location.protocol + '//' + location.host;
+    //HOST = "http://localhost:8080";
+    HOST = location.protocol + '//' + location.host;
     return fetch(`${HOST}/serie`, GET)
         .then(response => response.json())
         .catch(error => console.log('error', error));

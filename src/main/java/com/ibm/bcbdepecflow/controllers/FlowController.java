@@ -79,7 +79,7 @@ public class FlowController {
         return ResponseEntity.ok().body(list);
     }
 
-    @PostMapping
+    @PostMapping(value = "/edit")
     public ResponseEntity<Flow> insert(@RequestBody Flow obj) {
         obj = service.insert(obj);
         URI uri = ServletUriComponentsBuilder
@@ -90,19 +90,19 @@ public class FlowController {
         return ResponseEntity.created(uri).body(obj);
     }
 
-    @DeleteMapping(value = "/{id}")
+    @DeleteMapping(value = "/edit/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping(value = "/{id}")
+    @PutMapping(value = "/edit/{id}")
     public ResponseEntity<Flow> update(@PathVariable Long id, @RequestBody Flow obj) {
         obj = service.update(id, obj);
         return ResponseEntity.ok().body(obj);
     }
 
-    @PatchMapping(value = "/{id}")
+    @PatchMapping(value = "/edit/{id}")
     public ResponseEntity<Flow> updatePartially(@PathVariable Long id, @RequestBody Flow obj) {
         obj = service.updatePartially(id, obj);
         return ResponseEntity.ok().body(obj);
