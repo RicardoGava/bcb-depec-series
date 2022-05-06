@@ -46,15 +46,17 @@ tfoot tr {
     border: 1px solid #333;
     background-color: #333;
     color: #fff;
+    line-height: 1.6;
 }
 
-input[type='number']{
+#page {
     width: 42px;
 }
 
-label {
+label.dates {
     display: inline-block;
-    width: 50px;
+    text-align: right;
+    width: 45px;
 }
 
 @media screen and (max-width: 430px) {

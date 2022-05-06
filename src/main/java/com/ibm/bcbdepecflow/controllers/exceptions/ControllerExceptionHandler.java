@@ -15,7 +15,7 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(IdNotFoundException.class)
     public ResponseEntity<StandardError> resourceNotFound(IdNotFoundException e, HttpServletRequest request) {
-        String error = "Item not found";
+        String error = "Id not found";
         HttpStatus status = HttpStatus.NOT_FOUND;
         StandardError err = new StandardError(Instant.now(),
                 status.value(),
