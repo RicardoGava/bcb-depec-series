@@ -1,6 +1,7 @@
 package com.ibm.bcbdepecflow.controllers;
 
 import com.ibm.bcbdepecflow.services.SeriesMetadataHashMapService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -20,6 +21,7 @@ public class SeriesController {
     @Autowired
     private SeriesMetadataHashMapService seriesMetadata;
 
+    @ApiOperation(value = "Retorna os metadados das séries")
     @GetMapping
     public ResponseEntity<HashMap<String, String>> seriesMetadata() {
         return ResponseEntity.ok().body(seriesMetadata.getSeriesMetadataHashMap());

@@ -1,6 +1,7 @@
 var SERIE;
 var HOST;
 var firstLoad = true;
+var autoReset = true;
 
 var parameters = {
     page: 0,
@@ -50,9 +51,12 @@ let receivedData = async () => {
 let genTables = (result) => {
     lastValues.totalPages = result.totalPages;
     lastValues.pageNumber = result.pageable.pageNumber;
-    if (result.content == '') {
+    if (result.content == '' && autoReset == true) {
         parameters.page = result.totalPages - 1;
+        autoReset = false;
         receivedData();
+    } else {
+        autoReset = true;
     }
     const table = document.getElementById('table');
     table.innerHTML = `<caption>${document.title}</caption>
@@ -87,11 +91,11 @@ let genTables = (result) => {
             <td>
                 <input type="checkbox" id="fromDateCheckbox" onclick="fromDateEnable();" ${(parameters.dataInicial != '') ? 'checked' : ''}>
                 <label for="fromDate" class="dates">Inicial:</label>
-                <input type="date" id="fromDate" name="fromDate" value="${dateFormatInverter(parameters.dataInicial)}" onChange="fromDateFilter(this.value);" ${(parameters.dataInicial == '') ? 'disabled="true"' : ''}>
+                <input type="date" id="fromDate" name="fromDate" value="${dateFormatInverter(parameters.dataInicial)}" onChange="fromDateFilter(this.value);" onfocusout="fromDateFilter(this.value);" onKeyUp="enterToDateFilter(event);" ${(parameters.dataInicial == '') ? 'disabled="true"' : ''}>
                 <br>
                 <input type="checkbox" id="toDateCheckbox" onclick="toDateEnable();" ${(parameters.dataFinal != '') ? 'checked' : ''}>
                 <label for="toDate" class="dates">Final:</label>
-                <input type="date" id="toDate" name="toDate" value="${dateFormatInverter(parameters.dataFinal)}" onChange="toDateFilter(this.value);" ${(parameters.dataFinal == '') ? 'disabled="true"' : ''}>
+                <input type="date" id="toDate" name="toDate" value="${dateFormatInverter(parameters.dataFinal)}" onChange="toDateFilter(this.value);" onfocusout="toDateFilter(this.value);" onKeyUp="enterToDateFilter(event);" ${(parameters.dataFinal == '') ? 'disabled="true"' : ''}>
             </td>
             <td>
                 <input type="button" value="&#9668;" onclick="previous()">
@@ -111,14 +115,30 @@ const genTh = (content) => {
     return th;
 };
 
+const enterFromDateFilter = (event) => {
+    if (event.key === "Enter") {
+        receivedData();
+    }
+};
+
+const enterToDateFilter = (event) => {
+    if (event.key === "Enter") {
+        receivedData();
+    }
+};
+
 const fromDateFilter = (date) => {
     parameters.dataInicial = dateFormatInverter(date);
-    (parameters.dataInicial != '') ? receivedData() : {};
+    if (parameters.dataInicial != '' && document.activeElement != document.getElementById('fromDate')) {
+        receivedData();
+    }
 };
 
 const toDateFilter = (date) => {
     parameters.dataFinal = dateFormatInverter(date);
-    (parameters.dataFinal != '') ? receivedData() : {};
+    if (parameters.dataFinal != '' && document.activeElement != document.getElementById('toDate')) {
+        receivedData();
+    }
 };
 
 const fromDateEnable = () => {
