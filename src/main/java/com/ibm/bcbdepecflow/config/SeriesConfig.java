@@ -6,6 +6,7 @@ import com.gargoylesoftware.htmlunit.SilentCssErrorHandler;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.javascript.SilentJavaScriptErrorListener;
 import com.ibm.bcbdepecflow.domain.Flow;
+import com.ibm.bcbdepecflow.services.FlowService;
 import com.ibm.bcbdepecflow.services.SeriesMetadataHashMapService;
 import com.ibm.bcbdepecflow.repositories.FlowRepository;
 import io.netty.handler.timeout.ReadTimeoutException;
@@ -45,26 +46,32 @@ public class SeriesConfig implements CommandLineRunner {
         // https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html
         // https://www.baeldung.com/spring-webflux-timeout
 
-        WebClient webClient = WebClient.create();
+        // Onboarding:
 
-        Flux<Flow> fluxFlow = webClient
-                .method(HttpMethod.GET)
-                .uri("https://api.bcb.gov.br/dados/serie/bcdata.sgs." + serie + "/dados?formato=json")
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToFlux(Flow.class)
-                .timeout(Duration.ofSeconds(5))
-                .onErrorMap(ReadTimeoutException.class, ex -> new HttpTimeoutException("ReadTimeout"));
+        if (flowRepository.findAll().isEmpty() == true) {
+            WebClient webClient = WebClient.create();
 
-        List<Flow> flowList = fluxFlow
-                .collect(Collectors.toList())
-                .share().block();
+            Flux<Flow> fluxFlow = webClient
+                    .method(HttpMethod.GET)
+                    .uri("https://api.bcb.gov.br/dados/serie/bcdata.sgs." + serie + "/dados?formato=json")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .retrieve()
+                    .bodyToFlux(Flow.class)
+                    .timeout(Duration.ofSeconds(10))
+                    .onErrorMap(ReadTimeoutException.class, ex -> new HttpTimeoutException("ReadTimeout"));
 
-        if (flowList != null) {
-            flowRepository.saveAll(flowList);
-        } else {
-            throw new RuntimeException("Não foi possível obter os dados da URI especificada.");
+            List<Flow> flowList = fluxFlow
+                    .collect(Collectors.toList())
+                    .share().block();
+
+            if (flowList != null) {
+                flowRepository.saveAll(flowList);
+            } else {
+                throw new RuntimeException("Não foi possível obter os dados da URI especificada.");
+            }
         }
+
+        // Obtenção dos metadados:
 
         final com.gargoylesoftware.htmlunit.WebClient pageLoader =
                 new com.gargoylesoftware.htmlunit.WebClient(BrowserVersion.FIREFOX);
