@@ -33,7 +33,7 @@ public class FlowController {
     }
 
     @ApiOperation(value = "Retorna valores com o filtro de dia, mês e ano")
-    @GetMapping(value= "/data")
+    @GetMapping(value = "/data")
     @ResponseBody
     public ResponseEntity<List<Flow>> findByData(
             @ApiParam(value = "Filtrar por dia. Formato: dd")
@@ -42,7 +42,7 @@ public class FlowController {
             @RequestParam(required = false) Integer mes,
             @ApiParam(value = "Filtrar por ano. Formato: yyyy")
             @RequestParam(required = false) Integer ano
-            ) {
+    ) {
         List<Flow> list = service.findByData(dia, mes, ano);
         return ResponseEntity.ok().body(list);
     }
@@ -83,11 +83,7 @@ public class FlowController {
     public ResponseEntity<List<FlowSum>> getYearTotal(
             @RequestParam(required = false) String ano) {
         List<FlowSum> list = new ArrayList<>();
-        if (ano != null) {
-            list = service.getYearTotal(ano);
-        } else {
-            list = service.getYearTotal(null);
-        }
+        list = service.getYearTotal(ano);
         return ResponseEntity.ok().body(list);
     }
 
