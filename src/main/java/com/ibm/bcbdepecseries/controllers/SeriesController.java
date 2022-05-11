@@ -1,8 +1,8 @@
-package com.ibm.bcbdepecflow.controllers;
+package com.ibm.bcbdepecseries.controllers;
 
-import com.ibm.bcbdepecflow.domain.Flow;
-import com.ibm.bcbdepecflow.domain.FlowSum;
-import com.ibm.bcbdepecflow.services.FlowService;
+import com.ibm.bcbdepecseries.domain.Series;
+import com.ibm.bcbdepecseries.domain.SeriesSum;
+import com.ibm.bcbdepecseries.services.SeriesService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,22 +20,22 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @RequestMapping(value = "${api-bcb-serie}/dados")
-public class FlowController {
+public class SeriesController {
 
     @Autowired
-    private FlowService service;
+    private SeriesService service;
 
     @ApiOperation(value = "Retorna o valor do ID desejado")
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Flow> findById(@PathVariable Long id) {
-        Flow obj = service.findById(id);
+    public ResponseEntity<Series> findById(@PathVariable Long id) {
+        Series obj = service.findById(id);
         return ResponseEntity.ok().body(obj);
     }
 
     @ApiOperation(value = "Retorna valores com o filtro de dia, mês e ano")
     @GetMapping(value = "/data")
     @ResponseBody
-    public ResponseEntity<List<Flow>> findByData(
+    public ResponseEntity<List<Series>> findByData(
             @ApiParam(value = "Filtrar por dia. Formato: dd")
             @RequestParam(required = false) Integer dia,
             @ApiParam(value = "Filtrar por mês. Formato: MM")
@@ -43,7 +43,7 @@ public class FlowController {
             @ApiParam(value = "Filtrar por ano. Formato: yyyy")
             @RequestParam(required = false) Integer ano
     ) {
-        List<Flow> list = service.findByData(dia, mes, ano);
+        List<Series> list = service.findByData(dia, mes, ano);
         return ResponseEntity.ok().body(list);
     }
 
@@ -51,13 +51,13 @@ public class FlowController {
             " paginação (page, size, sort), data inicial e data final")
     @GetMapping
     @ResponseBody
-    public ResponseEntity<Page<Flow>> multipleFindPageable(
+    public ResponseEntity<Page<Series>> multipleFindPageable(
             Pageable pageable,
             @ApiParam(value = "Filtrar por data inicial. Formato: dd/MM/yyyy")
             @RequestParam(required = false) LocalDate dataInicial,
             @ApiParam(value = "Filtrar por data final. Formato: dd/MM/yyyy")
             @RequestParam(required = false) LocalDate dataFinal) {
-        Page<Flow> page;
+        Page<Series> page;
         if (dataInicial != null && dataFinal != null) {
             page = service.findAllByDataBetween(dataInicial, dataFinal, pageable);
         } else if (dataInicial != null) {
@@ -72,24 +72,24 @@ public class FlowController {
 
     @ApiOperation(value = "Retorna os últimos valores ordenados por data")
     @GetMapping(value = "/ultimos/{valores}")
-    public ResponseEntity<List<Flow>> findLastValues(@PathVariable Integer valores) {
-        List<Flow> list = service.findLastValues(valores);
+    public ResponseEntity<List<Series>> findLastValues(@PathVariable Integer valores) {
+        List<Series> list = service.findLastValues(valores);
         return ResponseEntity.ok().body(list);
     }
 
     @ApiOperation(value = "Retorna a soma de todos os anos ou de algum ano especificado como parâmetro")
     @GetMapping(value = "/soma")
     @ResponseBody
-    public ResponseEntity<List<FlowSum>> getYearTotal(
+    public ResponseEntity<List<SeriesSum>> getYearTotal(
             @RequestParam(required = false) String ano) {
-        List<FlowSum> list = new ArrayList<>();
+        List<SeriesSum> list = new ArrayList<>();
         list = service.getYearTotal(ano);
         return ResponseEntity.ok().body(list);
     }
 
     @ApiOperation(value = "Insere um valor no repositório")
     @PostMapping(value = "/insert")
-    public ResponseEntity<Flow> insert(@RequestBody Flow obj) {
+    public ResponseEntity<Series> insert(@RequestBody Series obj) {
         obj = service.insert(obj);
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -108,14 +108,14 @@ public class FlowController {
 
     @ApiOperation(value = "Edita um determinado ID no repositório")
     @PutMapping(value = "/update/{id}")
-    public ResponseEntity<Flow> update(@PathVariable Long id, @RequestBody Flow obj) {
+    public ResponseEntity<Series> update(@PathVariable Long id, @RequestBody Series obj) {
         obj = service.update(id, obj);
         return ResponseEntity.ok().body(obj);
     }
 
     @ApiOperation(value = "Edita uma coluna de um determinado ID no repositório")
     @PatchMapping(value = "/update/{id}")
-    public ResponseEntity<Flow> updatePartially(@PathVariable Long id, @RequestBody Flow obj) {
+    public ResponseEntity<Series> updatePartially(@PathVariable Long id, @RequestBody Series obj) {
         obj = service.updatePartially(id, obj);
         return ResponseEntity.ok().body(obj);
     }

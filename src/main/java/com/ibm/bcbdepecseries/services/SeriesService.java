@@ -1,12 +1,10 @@
-package com.ibm.bcbdepecflow.services;
+package com.ibm.bcbdepecseries.services;
 
-import com.ibm.bcbdepecflow.domain.Flow;
-import com.ibm.bcbdepecflow.domain.FlowSum;
-import com.ibm.bcbdepecflow.repositories.FlowRepository;
-import com.ibm.bcbdepecflow.services.exceptions.DataBaseException;
-import com.ibm.bcbdepecflow.services.exceptions.IdNotFoundException;
+import com.ibm.bcbdepecseries.domain.Series;
+import com.ibm.bcbdepecseries.domain.SeriesSum;
+import com.ibm.bcbdepecseries.repositories.SeriesRepository;
+import com.ibm.bcbdepecseries.services.exceptions.IdNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,25 +22,25 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class FlowService {
+public class SeriesService {
 
     @Autowired
-    private FlowRepository repository;
+    private SeriesRepository repository;
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public Page<Flow> findAll(Pageable pageable) {
+    public Page<Series> findAll(Pageable pageable) {
         return repository.findAll(pageable);
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public Flow findById(Long id) {
-        Optional<Flow> obj = repository.findById(id);
+    public Series findById(Long id) {
+        Optional<Series> obj = repository.findById(id);
         return obj.orElseThrow(() -> new IdNotFoundException(id));
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public List<Flow> findByData(Integer dia, Integer mes, Integer ano) {
-        List<Flow> list = repository.findAll();
+    public List<Series> findByData(Integer dia, Integer mes, Integer ano) {
+        List<Series> list = repository.findAll();
         if (ano != null) {
             list = list.stream().filter(data -> data.getData().getYear() == ano).collect(Collectors.toList());
         }
@@ -56,27 +54,27 @@ public class FlowService {
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public Page<Flow> findAllByDataBetween(LocalDate dataInicial, LocalDate datafinal, Pageable pageable) {
+    public Page<Series> findAllByDataBetween(LocalDate dataInicial, LocalDate datafinal, Pageable pageable) {
         return repository.findAllByDataBetween(dataInicial, datafinal, pageable);
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public Page<Flow> findAllByDataGreaterThanEqual(LocalDate dataInicial, Pageable pageable) {
+    public Page<Series> findAllByDataGreaterThanEqual(LocalDate dataInicial, Pageable pageable) {
         return repository.findAllByDataGreaterThanEqual(dataInicial, pageable);
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public Page<Flow> findAllByDataLessThanEqual(LocalDate datafinal, Pageable pageable) {
+    public Page<Series> findAllByDataLessThanEqual(LocalDate datafinal, Pageable pageable) {
         return repository.findAllByDataLessThanEqual(datafinal, pageable);
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public List<Flow> findLastValues(Integer valores) {
-        Page<Flow> page = repository.findAll(
+    public List<Series> findLastValues(Integer valores) {
+        Page<Series> page = repository.findAll(
                 PageRequest.of(0, valores, Sort.by(
                         Sort.Direction.DESC, "data")));
-        List<Flow> list = page.getContent();
-        List<Flow> reversedList = new ArrayList<>();
+        List<Series> list = page.getContent();
+        List<Series> reversedList = new ArrayList<>();
         for (int i = list.size() - 1; i >= 0; i--) {
             reversedList.add(list.get(i));
         }
@@ -84,12 +82,12 @@ public class FlowService {
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public List<FlowSum> getYearTotal(String ano) {
+    public List<SeriesSum> getYearTotal(String ano) {
         DateTimeFormatter yof = DateTimeFormatter.ofPattern("yyyy");
-        List<Flow> list = repository.findAll();
-        Map<String, List<Flow>> groupedByYear = list.stream()
-                .collect(Collectors.groupingBy(flow -> flow.getData().format(yof)));
-        List<FlowSum> sumList = new ArrayList<>();
+        List<Series> list = repository.findAll();
+        Map<String, List<Series>> groupedByYear = list.stream()
+                .collect(Collectors.groupingBy(series -> series.getData().format(yof)));
+        List<SeriesSum> sumList = new ArrayList<>();
         if (ano != null) {
             if (groupedByYear.containsKey(ano)) {
                 sumList.add(genSumList(ano, groupedByYear));
@@ -100,25 +98,25 @@ public class FlowService {
             }
         }
         return sumList.stream()
-                .sorted(Comparator.comparing(FlowSum::getAno))
+                .sorted(Comparator.comparing(SeriesSum::getAno))
                 .collect(Collectors.toList());
     }
 
-    public static FlowSum genSumList(String key, Map<String, List<Flow>> map) {
-        List<Flow> flowList = map.get(key);
-        FlowSum flowSum = new FlowSum(
+    public static SeriesSum genSumList(String key, Map<String, List<Series>> map) {
+        List<Series> seriesList = map.get(key);
+        SeriesSum seriesSum = new SeriesSum(
                 Integer.valueOf(key),
-                flowList.size(),
+                seriesList.size(),
                 new BigDecimal(0)
         );
-        for (Flow flow : flowList) {
-            flowSum.setTotal(flowSum.getTotal().add(flow.getValor()));
+        for (Series series : seriesList) {
+            seriesSum.setTotal(seriesSum.getTotal().add(series.getValor()));
         }
-        return flowSum;
+        return seriesSum;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public Flow insert(Flow obj) {
+    public Series insert(Series obj) {
         return repository.save(obj);
     }
 
@@ -132,9 +130,9 @@ public class FlowService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public Flow update(Long id, Flow obj) {
+    public Series update(Long id, Series obj) {
         try {
-            Flow entity = repository.getById(id);
+            Series entity = repository.getById(id);
             entity.setData(obj.getData());
             entity.setValor(obj.getValor());
             return repository.save(entity);
@@ -144,9 +142,9 @@ public class FlowService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public Flow updatePartially(Long id, Flow obj) {
+    public Series updatePartially(Long id, Series obj) {
         try {
-            Flow entity = repository.getById(id);
+            Series entity = repository.getById(id);
             if (obj.getData() != null) {
                 entity.setData(obj.getData());
             }

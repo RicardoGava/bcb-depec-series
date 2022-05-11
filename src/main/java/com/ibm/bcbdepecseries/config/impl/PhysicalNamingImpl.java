@@ -1,4 +1,4 @@
-package com.ibm.bcbdepecflow.config.impl;
+package com.ibm.bcbdepecseries.config.impl;
 
 import org.hibernate.boot.model.naming.Identifier;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl;
@@ -7,14 +7,14 @@ import org.springframework.beans.factory.annotation.Value;
 
 public class PhysicalNamingImpl extends PhysicalNamingStrategyStandardImpl {
 
-    @Value("tb_dados_serie_${api-bcb-serie}")
-    private String flowTableName;
+    @Value("tb_series_${api-bcb-serie}")
+    private String seriesTableName;
 
     @Override
     public Identifier toPhysicalTableName(Identifier name, JdbcEnvironment context) {
         switch (name.getText()) {
-            case "Flow":
-                return new Identifier(flowTableName, name.isQuoted());
+            case "Series":
+                return new Identifier(seriesTableName, name.isQuoted());
             default:
                 return super.toPhysicalTableName(name, context);
         }

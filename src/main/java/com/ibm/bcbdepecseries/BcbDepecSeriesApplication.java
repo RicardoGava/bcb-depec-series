@@ -1,13 +1,13 @@
-package com.ibm.bcbdepecflow;
+package com.ibm.bcbdepecseries;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BcbDepecFlowApplication {
+public class BcbDepecSeriesApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(BcbDepecFlowApplication.class, args);
+        SpringApplication.run(BcbDepecSeriesApplication.class, args);
     }
 
 }

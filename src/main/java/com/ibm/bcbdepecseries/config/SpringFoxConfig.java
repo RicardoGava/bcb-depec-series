@@ -1,6 +1,6 @@
-package com.ibm.bcbdepecflow.config;
+package com.ibm.bcbdepecseries.config;
 
-import com.ibm.bcbdepecflow.config.util.SwaggerPageable;
+import com.ibm.bcbdepecseries.config.util.SwaggerPageable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Pageable;

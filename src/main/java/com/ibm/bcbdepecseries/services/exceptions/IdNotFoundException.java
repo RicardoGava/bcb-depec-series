@@ -1,4 +1,4 @@
-package com.ibm.bcbdepecflow.services.exceptions;
+package com.ibm.bcbdepecseries.services.exceptions;
 
 public class IdNotFoundException extends RuntimeException {
     private static final long serialVersionUID = 1L;

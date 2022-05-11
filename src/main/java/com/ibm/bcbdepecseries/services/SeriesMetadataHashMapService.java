@@ -1,4 +1,4 @@
-package com.ibm.bcbdepecflow.services;
+package com.ibm.bcbdepecseries.services;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,8 +1,8 @@
-package com.ibm.bcbdepecflow.services;
+package com.ibm.bcbdepecseries.services;
 
 import org.junit.jupiter.api.Test;
 
-class FlowServiceTest {
+class SeriesServiceTest {
 
     @Test
     void findAll() {

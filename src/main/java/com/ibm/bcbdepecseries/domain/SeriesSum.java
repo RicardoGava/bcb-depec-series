@@ -1,4 +1,4 @@
-package com.ibm.bcbdepecflow.domain;
+package com.ibm.bcbdepecseries.domain;
 
 import lombok.*;
 
@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class FlowSum implements Serializable {
+public class SeriesSum implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Integer ano;

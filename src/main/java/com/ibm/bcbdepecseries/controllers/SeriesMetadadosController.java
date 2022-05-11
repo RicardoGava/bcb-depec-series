@@ -1,6 +1,6 @@
-package com.ibm.bcbdepecflow.controllers;
+package com.ibm.bcbdepecseries.controllers;
 
-import com.ibm.bcbdepecflow.services.SeriesMetadataHashMapService;
+import com.ibm.bcbdepecseries.services.SeriesMetadataHashMapService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ import java.util.HashMap;
 @RestController
 @CrossOrigin
 @RequestMapping(value = "/serie")
-public class SeriesController {
+public class SeriesMetadadosController {
 
     @Autowired
     private SeriesMetadataHashMapService seriesMetadata;

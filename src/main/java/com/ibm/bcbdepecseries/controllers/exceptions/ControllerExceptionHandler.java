@@ -1,7 +1,7 @@
-package com.ibm.bcbdepecflow.controllers.exceptions;
+package com.ibm.bcbdepecseries.controllers.exceptions;
 
-import com.ibm.bcbdepecflow.services.exceptions.DataBaseException;
-import com.ibm.bcbdepecflow.services.exceptions.IdNotFoundException;
+import com.ibm.bcbdepecseries.services.exceptions.DataBaseException;
+import com.ibm.bcbdepecseries.services.exceptions.IdNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

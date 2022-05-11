@@ -1,4 +1,4 @@
-package com.ibm.bcbdepecflow.config.util;
+package com.ibm.bcbdepecseries.config.util;
 
 import io.swagger.annotations.ApiParam;
 import lombok.Getter;

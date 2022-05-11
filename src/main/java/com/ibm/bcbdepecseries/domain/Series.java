@@ -1,4 +1,4 @@
-package com.ibm.bcbdepecflow.domain;
+package com.ibm.bcbdepecseries.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Flow implements Serializable {
+public class Series implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id

@@ -1,14 +1,13 @@
-package com.ibm.bcbdepecflow.config;
+package com.ibm.bcbdepecseries.config;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.HttpHeader;
 import com.gargoylesoftware.htmlunit.SilentCssErrorHandler;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.javascript.SilentJavaScriptErrorListener;
-import com.ibm.bcbdepecflow.domain.Flow;
-import com.ibm.bcbdepecflow.services.FlowService;
-import com.ibm.bcbdepecflow.services.SeriesMetadataHashMapService;
-import com.ibm.bcbdepecflow.repositories.FlowRepository;
+import com.ibm.bcbdepecseries.domain.Series;
+import com.ibm.bcbdepecseries.services.SeriesMetadataHashMapService;
+import com.ibm.bcbdepecseries.repositories.SeriesRepository;
 import io.netty.handler.timeout.ReadTimeoutException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,7 +32,7 @@ public class SeriesConfig implements CommandLineRunner {
     String serie;
 
     @Autowired
-    private FlowRepository flowRepository;
+    private SeriesRepository seriesRepository;
 
     @Autowired
     private SeriesMetadataHashMapService seriesMetadata;
@@ -48,24 +47,24 @@ public class SeriesConfig implements CommandLineRunner {
 
         // Onboarding:
 
-        if (flowRepository.findAll().isEmpty() == true) {
+        if (seriesRepository.findAll().isEmpty() == true) {
             WebClient webClient = WebClient.create();
 
-            Flux<Flow> fluxFlow = webClient
+            Flux<Series> fluxFlow = webClient
                     .method(HttpMethod.GET)
                     .uri("https://api.bcb.gov.br/dados/serie/bcdata.sgs." + serie + "/dados?formato=json")
                     .accept(MediaType.APPLICATION_JSON)
                     .retrieve()
-                    .bodyToFlux(Flow.class)
+                    .bodyToFlux(Series.class)
                     .timeout(Duration.ofSeconds(10))
                     .onErrorMap(ReadTimeoutException.class, ex -> new HttpTimeoutException("ReadTimeout"));
 
-            List<Flow> flowList = fluxFlow
+            List<Series> seriesList = fluxFlow
                     .collect(Collectors.toList())
                     .share().block();
 
-            if (flowList != null) {
-                flowRepository.saveAll(flowList);
+            if (seriesList != null) {
+                seriesRepository.saveAll(seriesList);
             } else {
                 throw new RuntimeException("Não foi possível obter os dados da URI especificada.");
             }
@@ -106,7 +105,6 @@ public class SeriesConfig implements CommandLineRunner {
                             stringPage.indexOf(" Data início")
                     )
             );
-
         } catch (RuntimeException e) {
             System.out.println(e.getMessage());
         }
