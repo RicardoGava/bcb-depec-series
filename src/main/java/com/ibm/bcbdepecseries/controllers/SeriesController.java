@@ -14,11 +14,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@CrossOrigin
 @RequestMapping(value = "${api-bcb-serie}/dados")
 public class SeriesController {
 
@@ -28,8 +26,7 @@ public class SeriesController {
     @ApiOperation(value = "Retorna o valor do ID desejado")
     @GetMapping(value = "/{id}")
     public ResponseEntity<Series> findById(@PathVariable Long id) {
-        Series obj = service.findById(id);
-        return ResponseEntity.ok().body(obj);
+        return ResponseEntity.ok().body(service.findById(id));
     }
 
     @ApiOperation(value = "Retorna valores com o filtro de dia, mês e ano")
@@ -43,8 +40,7 @@ public class SeriesController {
             @ApiParam(value = "Filtrar por ano. Formato: yyyy")
             @RequestParam(required = false) Integer ano
     ) {
-        List<Series> list = service.findByData(dia, mes, ano);
-        return ResponseEntity.ok().body(list);
+        return ResponseEntity.ok().body(service.findByData(dia, mes, ano));
     }
 
     @ApiOperation(value = "Retorna valores paginados com parâmetros de" +
@@ -73,8 +69,7 @@ public class SeriesController {
     @ApiOperation(value = "Retorna os últimos valores ordenados por data")
     @GetMapping(value = "/ultimos/{valores}")
     public ResponseEntity<List<Series>> findLastValues(@PathVariable Integer valores) {
-        List<Series> list = service.findLastValues(valores);
-        return ResponseEntity.ok().body(list);
+        return ResponseEntity.ok().body(service.findLastValues(valores));
     }
 
     @ApiOperation(value = "Retorna a soma de todos os anos ou de algum ano especificado como parâmetro")
@@ -82,9 +77,7 @@ public class SeriesController {
     @ResponseBody
     public ResponseEntity<List<SeriesSum>> getYearTotal(
             @RequestParam(required = false) String ano) {
-        List<SeriesSum> list = new ArrayList<>();
-        list = service.getYearTotal(ano);
-        return ResponseEntity.ok().body(list);
+        return ResponseEntity.ok().body(service.getYearTotal(ano));
     }
 
     @ApiOperation(value = "Insere um valor no repositório")

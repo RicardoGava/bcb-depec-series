@@ -34,8 +34,7 @@ public class SeriesService {
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Series findById(Long id) {
-        Optional<Series> obj = repository.findById(id);
-        return obj.orElseThrow(() -> new IdNotFoundException(id));
+        return repository.findById(id).orElseThrow(() -> new IdNotFoundException(id));
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)

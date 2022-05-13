@@ -50,7 +50,7 @@ public class SeriesConfig implements CommandLineRunner {
         if (seriesRepository.findAll().isEmpty() == true) {
             WebClient webClient = WebClient.create();
 
-            Flux<Series> fluxFlow = webClient
+            Flux<Series> flux = webClient
                     .method(HttpMethod.GET)
                     .uri("https://api.bcb.gov.br/dados/serie/bcdata.sgs." + serie + "/dados?formato=json")
                     .accept(MediaType.APPLICATION_JSON)
@@ -59,7 +59,7 @@ public class SeriesConfig implements CommandLineRunner {
                     .timeout(Duration.ofSeconds(10))
                     .onErrorMap(ReadTimeoutException.class, ex -> new HttpTimeoutException("ReadTimeout"));
 
-            List<Series> seriesList = fluxFlow
+            List<Series> seriesList = flux
                     .collect(Collectors.toList())
                     .share().block();
 

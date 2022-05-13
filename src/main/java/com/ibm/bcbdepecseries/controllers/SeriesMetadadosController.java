@@ -14,7 +14,6 @@ import java.util.HashMap;
 
 
 @RestController
-@CrossOrigin
 @RequestMapping(value = "/serie")
 public class SeriesMetadadosController {
 
